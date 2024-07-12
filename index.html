@@ -1,1 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Squad Entry Form</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+        }
 
+        .container {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 600px;
+            overflow-y: auto;
+            max-height: 70vh;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="submit"] {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border: 1px solid #333;
+            background-color: #2c2c2c;
+            color: #ffffff;
+        }
+
+        input[type="submit"] {
+            cursor: pointer;
+            background-color: #4CAF50;
+            border: none;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .entries {
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .entry {
+            background-color: #2c2c2c;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .entry h2 {
+            margin: 0 0 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Squad Entry Form</h1>
+        <form id="squadForm">
+            <label for="team-name">Team Name:</label>
+            <input type="text" id="team-name" name="team-name" required>
+
+            <label for="player1-name">Player 1 Name:</label>
+            <input type="text" id="player1-name" name="player1-name" required>
+
+            <label for="player2-name">Player 2 Name:</label>
+            <input type="text" id="player2-name" name="player2-name" required>
+
+            <label for="player3-name">Player 3 Name:</label>
+            <input type="text" id="player3-name" name="player3-name" required>
+
+            <label for="player4-name">Player 4 Name:</label>
+            <input type="text" id="player4-name" name="player4-name" required>
+
+            <input type="submit" value="Submit">
+        </form>
+        <div id="submissionMessage" style="display:none; color: #4CAF50; text-align: center; margin-top: 20px;">Entry submitted successfully!</div>
+        <div id="maxEntriesMessage" style="display:none; color: #FF0000; text-align: center; margin-top: 20px;">Maximum number of entries reached!</div>
+        <div class="entries" id="entriesContainer"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('squadForm');
+        const submissionMessage = document.getElementById('submissionMessage');
+        const maxEntriesMessage = document.getElementById('maxEntriesMessage');
+        const entriesContainer = document.getElementById('entriesContainer');
+
+        let entries = [];
+        const maxEntries = 25;
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            if (entries.length < maxEntries) {
+                lockForm();
+                
+                const teamName = form['team-name'].value;
+                const player1Name = form['player1-name'].value;
+                const player2Name = form['player2-name'].value;
+                const player3Name = form['player3-name'].value;
+                const player4Name = form['player4-name'].value;
+
+                const entry = {
+                    teamName,
+                    players: [
+                        { name: player1Name },
+                        { name: player2Name },
+                        { name: player3Name },
+                        { name: player4Name },
+                    ]
+                };
+
+                entries.push(entry);
+                displayEntries();
+                submissionMessage.style.display = 'block';
+                maxEntriesMessage.style.display = 'none';
+                form.reset();
+
+                unlockForm();
+            } else {
+                maxEntriesMessage.style.display = 'block';
+                submissionMessage.style.display = 'none';
+            }
+        });
+
+        function lockForm() {
+            const inputs = form.querySelectorAll('input[type="text"], input[type="submit"]');
+            inputs.forEach(input => input.disabled = true);
+        }
+
+        function unlockForm() {
+            const inputs = form.querySelectorAll('input[type="text"], input[type="submit"]');
+            inputs.forEach(input => input.disabled = false);
+        }
+
+        function displayEntries() {
+            entriesContainer.innerHTML = '';
+            entries.forEach((entry, index) => {
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'entry';
+                entryDiv.innerHTML = `
+                    <h2>Squad ${index + 1}: ${entry.teamName}</h2>
+                    <p><strong>Player 1:</strong> ${entry.players[0].name}</p>
+                    <p><strong>Player 2:</strong> ${entry.players[1].name}</p>
+                    <p><strong>Player 3:</strong> ${entry.players[2].name}</p>
+                    <p><strong>Player 4:</strong> ${entry.players[3].name}</p>
+                `;
+                entriesContainer.appendChild(entryDiv);
+            });
+        }
+    </script>
+</body>
+</html>
